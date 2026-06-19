@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poster All – Download App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0B0C10;
+      --surface: #13151B;
+      --border: #1F2230;
+      --accent: #7C6FF7;
+      --accent-light: #A99DF9;
+      --accent-glow: rgba(124, 111, 247, 0.18);
+      --text: #E8E9F0;
+      --muted: #6B6E85;
+      --white: #FFFFFF;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ── Glow orb ── */
+    .orb {
+      position: fixed;
+      top: -180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(124,111,247,0.22) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      width: 100%;
+      max-width: 1100px;
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+    .logo span { color: var(--accent-light); }
+
+    .badge-android {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(124,111,247,0.3);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--accent-light);
+    }
+    .badge-android svg { width: 14px; height: 14px; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 700px;
+      padding: 80px 32px 60px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.07;
+      letter-spacing: -0.03em;
+      color: var(--white);
+    }
+    h1 .highlight {
+      background: linear-gradient(135deg, #A99DF9 0%, #7C6FF7 60%, #5B50D6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.65;
+    }
+
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 10;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 40px;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 21px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(124,111,247,0.4), transparent 60%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #7C6FF7, #5B50D6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(124,111,247,0.35);
+    }
+    .icon-wrap svg { width: 28px; height: 28px; color: #fff; }
+
+    .file-meta { display: flex; flex-direction: column; gap: 3px; }
+    .file-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .file-size {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    .specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .spec {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .spec-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .spec-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    /* ── Download Button ── */
+    .btn-download {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 28px;
+      background: linear-gradient(135deg, #7C6FF7 0%, #5B50D6 100%);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.18s, transform 0.18s, box-shadow 0.18s;
+      box-shadow: 0 4px 20px rgba(124,111,247,0.4);
+      letter-spacing: -0.01em;
+    }
+    .btn-download:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(124,111,247,0.5);
+    }
+    .btn-download:active { transform: translateY(0); }
+    .btn-download svg { width: 20px; height: 20px; }
+
+    /* ── Steps ── */
+    .steps {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 520px;
+      padding: 0 32px;
+      margin-top: 20px;
+    }
+    .steps-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-light);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-text {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .step-text strong { color: var(--text); font-weight: 500; }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 10;
+      margin-top: auto;
+      padding: 48px 32px 32px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 540px) {
+      .card { padding: 28px 24px; margin: 0 16px; }
+      nav { padding: 20px 20px; }
+      .hero { padding: 60px 20px 40px; }
+      .specs { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="orb"></div>
+
+  <nav>
+    <div class="logo">Poster<span>All</span></div>
+    <div class="badge-android">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341A5 5 0 0 0 17 13V8A5 5 0 0 0 7 8v5a5 5 0 0 0-.523 2.341L5 17h14l-1.477-1.659zM12 23a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2z"/></svg>
+      Android App
+    </div>
+  </nav>
+
+  <section class="hero">
+    <p class="eyebrow">Free Download</p>
+    <h1>Design <span class="highlight">beautiful posters</span> on your phone</h1>
+    <p class="sub">Create stunning posters, flyers, and social graphics with Poster All — directly on your Android device.</p>
+  </section>
+
+  <div class="card">
+    <div class="file-info">
+      <div class="icon-wrap">
+        <!-- Android APK icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="2" width="14" height="20" rx="3"/>
+          <line x1="9" y1="7" x2="15" y2="7"/>
+          <line x1="9" y1="11" x2="15" y2="11"/>
+          <line x1="9" y1="15" x2="12" y2="15"/>
+        </svg>
+      </div>
+      <div class="file-meta">
+        <div class="file-name">poster.apk</div>
+        <div class="file-size">55 MB · Android Package</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="specs">
+      <div class="spec">
+        <span class="spec-label">Platform</span>
+        <span class="spec-value">Android</span>
+      </div>
+      <div class="spec">
+        <span class="spec-label">File Size</span>
+        <span class="spec-value">55 MB</span>
+      </div>
+      <div class="spec">
+        <span class="spec-label">Format</span>
+        <span class="spec-value">APK</span>
+      </div>
+      <div class="spec">
+        <span class="spec-label">Install</span>
+        <span class="spec-value">Sideload</span>
+      </div>
+    </div>
+
+    <a class="btn-download" href="poster.apk" download="poster.apk">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      Download APK
+    </a>
+  </div>
+
+  <div class="steps">
+    <p class="steps-title">How to install</p>
+    <div class="steps-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p class="step-text">Tap <strong>Download APK</strong> above and save the file to your device.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p class="step-text">Go to <strong>Settings → Security</strong> and enable <strong>Install unknown apps</strong> for your browser.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p class="step-text">Open the downloaded file from your <strong>notifications</strong> or <strong>Downloads folder</strong> and tap Install.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2026 Poster All. APK is safe to install on Android 6.0+.
+  </footer>
+
+</body>
+          </html>
+          
